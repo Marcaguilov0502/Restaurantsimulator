@@ -17,6 +17,10 @@ public class MySprites {
     private ScalableSprite table;       public final int TABLE = 4;
     private LevelSprite meal;           public final int MEAL = 5;
     private LevelSprite debugBoxes;     public final int DEBUG_BOXES = 6;
+    private Sprite painting;            public final int PAINTING = 7;
+    private Sprite sign;                public final int SIGN = 8;
+    private Sprite kitchenBar;          public final int KITCHEN_BAR = 9;
+    private Sprite kitchenPig;          public final int KITCHEN_PIG = 10;
 
 
     //Constructor
@@ -38,6 +42,10 @@ public class MySprites {
         table = new ScalableSprite("table.png");
         meal = new LevelSprite("meal.png",40,40);
         debugBoxes = new LevelSprite("debug_boxes.png",40,40);
+        painting = new Sprite("painting.png");
+        sign = new Sprite("sign.png");
+        kitchenBar = new Sprite("kitchen_bar.png");
+        kitchenPig = new Sprite("kitchen_pig.png");
     }
 
     public BufferedImage getCharacterSprite(int spriteID, int variantID) {
@@ -77,6 +85,14 @@ public class MySprites {
                 return background.image;
             case DOOR:
                 return door.image;
+            case PAINTING:
+                return painting.image;
+            case SIGN:
+                return sign.image;
+            case KITCHEN_BAR:
+                return kitchenBar.image;
+            case KITCHEN_PIG:
+                return kitchenPig.image;
             default:
                 throw new IllegalArgumentException("Not existing sprite " + spriteID);
         }

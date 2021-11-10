@@ -30,7 +30,6 @@ public class Chef extends Character {
                     turnAround();
                     table.placeMeal();
                     table.placeMeal();
-                    table.placeMeal();
                     wander();
                     findPath();
                 }

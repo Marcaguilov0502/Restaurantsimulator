@@ -11,7 +11,7 @@ public abstract class Character implements Runnable {
 
 
     public final int FRONT = 0, BACK = 1, LEFT = 2, RIGHT = 3;
-    public final int BASE_SPEED = 300;
+    public final int BASE_SPEED = 250;
 
     //Attributes
 
@@ -116,6 +116,9 @@ public abstract class Character implements Runnable {
                 } else {
                     pathFindingMap[x][y] = PathFinder.OBSTACLE;
                 }
+                if (this instanceof Client &&  map[x][y] == STAIRS) {
+                    pathFindingMap[x][y] = PathFinder.OBSTACLE;
+                }
             }
         }
         return pathFindingMap;
@@ -153,7 +156,6 @@ public abstract class Character implements Runnable {
         } else if (distanceX == 0 && distanceY == 0){ }
         else {
             findPath();
-            //throw new IllegalArgumentException();
         }
     }
 
@@ -193,21 +195,26 @@ public abstract class Character implements Runnable {
         int STAIRS = Window.restaurant.STAIRS;
         currentSpriteVariant = CharacterSprite.LEFT_N;
         float diagonalSpeed = (float) ((float) speed *Math.sqrt(2));
-        float increment = 1f/diagonalSpeed;
+        float totalSpeed = diagonalSpeed + speed;
+        float increment1 = 1f/speed;
+        float increment2 = 1f/diagonalSpeed;
         floor[1] = map[x-2][y+1];
         Window.restaurant.addToMap(x-2,y+1,CHARACTER);
-        for (int i = 0; i < (int)diagonalSpeed*2; i+=1) {
-            xOffset -= increment;
+        for (int i = 0; i < (int)totalSpeed; i+=1) {
             if (i > diagonalSpeed/2f && i < diagonalSpeed*3f/2f) {
-                yOffset += increment;
+                yOffset += increment2;
+                xOffset -= increment2;
+            } else {
+                xOffset -= increment1;
             }
             sleep(1);
-            if (i > (((float) speed)*6f)/4f) { currentSpriteVariant = CharacterSprite.LEFT_R; }
-            else if (i > (((float) speed)*5f)/4f) {currentSpriteVariant = CharacterSprite.LEFT_N;}
-            else if (i > ((float) speed)*4/4f) {currentSpriteVariant = CharacterSprite.LEFT_L;}
-            else if (i > (((float) speed)*3f)/4f) { currentSpriteVariant = CharacterSprite.LEFT_R; }
-            else if (i > (((float) speed)*2f)/4f) {currentSpriteVariant = CharacterSprite.LEFT_N;}
-            else if (i > ((float) speed)/4f) {currentSpriteVariant = CharacterSprite.LEFT_L;}
+            if (i > (((float) totalSpeed)*7f)/8f) {currentSpriteVariant = CharacterSprite.LEFT_R;}
+            else if (i > (((float) totalSpeed)*6f)/8f) {currentSpriteVariant = CharacterSprite.LEFT_N;}
+            else if (i > (((float) totalSpeed)*5f)/8f) {currentSpriteVariant = CharacterSprite.LEFT_L;}
+            else if (i > ((float) totalSpeed)*4f/8f) {currentSpriteVariant = CharacterSprite.LEFT_N;}
+            else if (i > (((float) totalSpeed)*3f)/8f) { currentSpriteVariant = CharacterSprite.LEFT_R; }
+            else if (i > (((float) totalSpeed)*2f)/8f) {currentSpriteVariant = CharacterSprite.LEFT_N;}
+            else if (i > ((float) totalSpeed)/8f) {currentSpriteVariant = CharacterSprite.LEFT_L;}
         }
         currentSpriteVariant = CharacterSprite.LEFT_N;
         Window.restaurant.addToMap(x,y,nextFloor());
@@ -359,21 +366,36 @@ public abstract class Character implements Runnable {
         int STAIRS = Window.restaurant.STAIRS;
         currentSpriteVariant = CharacterSprite.RIGHT_N;
         float diagonalSpeed = (float) ((float) speed *Math.sqrt(2));
-        float increment = 1f/diagonalSpeed;
+        float totalSpeed = diagonalSpeed + speed;
+        float increment1 = 1f/speed;
+        float increment2 = 1f/diagonalSpeed;
         floor[1] = map[x+2][y-1];
         Window.restaurant.addToMap(x+2,y-1,CHARACTER);
-        for (int i = 0; i < (int)diagonalSpeed*2; i+=1) {
-            xOffset += increment;
+        for (int i = 0; i < (int)totalSpeed; i+=1) {
             if (i > diagonalSpeed/2f && i < diagonalSpeed*3f/2f) {
-                yOffset -= increment;
+                yOffset -= increment2;
+                xOffset += increment2;
+            } else {
+                xOffset += increment1;
             }
             sleep(1);
+
+            if (i > (((float) totalSpeed)*7f)/8f) {currentSpriteVariant = CharacterSprite.RIGHT_R;}
+            else if (i > (((float) totalSpeed)*6f)/8f) {currentSpriteVariant = CharacterSprite.RIGHT_N;}
+            else if (i > (((float) totalSpeed)*5f)/8f) {currentSpriteVariant = CharacterSprite.RIGHT_L;}
+            else if (i > ((float) totalSpeed)*4/8f) {currentSpriteVariant = CharacterSprite.RIGHT_N;}
+            else if (i > (((float) totalSpeed)*3f)/8f) { currentSpriteVariant = CharacterSprite.RIGHT_R; }
+            else if (i > (((float) totalSpeed)*2f)/8f) {currentSpriteVariant = CharacterSprite.RIGHT_N;}
+            else if (i > ((float) totalSpeed)/8f) {currentSpriteVariant = CharacterSprite.RIGHT_L;}
+
+            /*
             if (i > (((float) speed)*6f)/4f) { currentSpriteVariant = CharacterSprite.RIGHT_R; }
             else if (i > (((float) speed)*5f)/4f) {currentSpriteVariant = CharacterSprite.RIGHT_N;}
             else if (i > ((float) speed)*4/4f) {currentSpriteVariant = CharacterSprite.RIGHT_L;}
             else if (i > (((float) speed)*3f)/4f) { currentSpriteVariant = CharacterSprite.RIGHT_R; }
             else if (i > (((float) speed)*2f)/4f) {currentSpriteVariant = CharacterSprite.RIGHT_N;}
             else if (i > ((float) speed)/4f) {currentSpriteVariant = CharacterSprite.RIGHT_L;}
+             */
         }
         currentSpriteVariant = CharacterSprite.RIGHT_N;
         Window.restaurant.addToMap(x,y,nextFloor());

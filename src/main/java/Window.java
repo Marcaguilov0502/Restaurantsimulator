@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Window extends JFrame  {
 
@@ -28,14 +29,22 @@ public class Window extends JFrame  {
         Table table = new Table(13,8,5,3);
         restaurant.addTable(table);
 
-        restaurant.addCharacter(new Chef(table, 12,11));
-        //restaurant.addCharacter(new Chef(table, 11,11));
-        //restaurant.addCharacter(new Chef(table, 13,11));
-        //restaurant.addCharacter(new Chef(table, 12,12));
-        restaurant.addCharacter(new Client(table,5,5));
-        restaurant.addCharacter(new Client(table,5,6));
-        //restaurant.addCharacter(new Client(table,6,5));
-        //restaurant.addCharacter(new Client(table,6,6));
+        restaurant.addDecoration( new Decoration(24,4, Decoration.DOOR));
+        restaurant.addDecoration( new Decoration(8,2, Decoration.PAINTING));
+        restaurant.addDecoration( new Decoration(21,1, Decoration.SIGN));
+        restaurant.addDecoration( new Decoration(1,4, Decoration.KITCHEN_BAR));
+        restaurant.addDecoration( new Decoration(5,4, Decoration.KITCHEN_PIG));
+
+        restaurant.addCharacter(new Chef(table, 2,5));
+        restaurant.addCharacter(new Chef(table, 3,5));
+        restaurant.addCharacter(new Chef(table, 3,6));
+        restaurant.addCharacter(new Chef(table, 4,5));
+        restaurant.addCharacter(new Client(table,12,11));
+        restaurant.addCharacter(new Client(table,11,11));
+        restaurant.addCharacter(new Client(table,10,11));
+        restaurant.addCharacter(new Client(table,12,12));
+        restaurant.addCharacter(new Client(table,11,12));
+        restaurant.addCharacter(new Client(table,10,12));
 
 
 

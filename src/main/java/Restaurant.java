@@ -18,6 +18,7 @@ public class Restaurant {
     private int[][] map = new int[27][18];
     private ArrayList<Character> characters = new ArrayList();
     private ArrayList<Table> tables = new ArrayList();
+    private ArrayList<Decoration> decorations = new ArrayList();
 
 
     //Constructor
@@ -33,6 +34,10 @@ public class Restaurant {
 
     public void addCharacter(Character character) {
         characters.add(character);
+    }
+
+    public void addDecoration(Decoration decoration) {
+        decorations.add(decoration);
     }
 
     public void addTable(Table table) {
@@ -100,4 +105,7 @@ public class Restaurant {
         return tables;
     }
 
+    public ArrayList<Decoration> getDecorations() {
+        return decorations;
+    }
 }
