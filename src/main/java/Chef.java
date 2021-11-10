@@ -1,3 +1,5 @@
+import java.util.Random;
+
 import static java.lang.Thread.sleep;
 
 public class Chef extends Character {
@@ -6,15 +8,14 @@ public class Chef extends Character {
     //Attributes
 
 
-    private Table table;
+    boolean hasMeal = false;
 
 
     //Constructor
 
 
     public Chef(Table table, int x, int y) {
-        super(x,y);
-        this.table = table;
+        super(x,y,table);
     }
 
 
@@ -26,12 +27,20 @@ public class Chef extends Character {
         System.out.println("Chef thread started");
         try {
             while (true) {
-                if (onTarget()) {
-                    turnAround();
-                    table.placeMeal();
-                    table.placeMeal();
-                    wander();
-                    findPath();
+                if (isOnTarget()) {
+                    if (isInKitchen() && !hasMeal) {
+                        cook();
+                        lookForTarget();
+                    } else if (isNextToTable() && hasMeal && isThereAnyPlace()) {
+                        lookAtTable();
+                        sleep(speed);
+                        table.placeMeal();
+                        hasMeal = false;
+                        lookForTarget();
+                    } else {
+                        turnAround();
+                        lookForTarget();
+                    }
                 }
                 followPath();
             }
@@ -39,5 +48,47 @@ public class Chef extends Character {
             e.printStackTrace();
         }
     }
+
+    @Override
+    protected void lookForTarget() {
+        if (hasMeal && isThereAnyPlace()) {
+            targetTable();
+        } else if (!hasMeal) {
+            targetKitchen();
+        } else {
+            targetRandom();
+        }
+    }
+
+    @Override
+    protected void targetRandom() {
+        Random r = new Random();
+        int[][] voidPositions = Window.restaurant.voidPositions();
+        int[] position = voidPositions[r.nextInt(voidPositions.length)];
+        target(position);
+    }
+
+    private void cook() throws InterruptedException {
+        currentSpriteVariant = CharacterSprite.FRONT_N;
+        sleep(speed/2);
+        currentSpriteVariant = CharacterSprite.ACTION1_1;
+        sleep(speed/2);
+        currentSpriteVariant = CharacterSprite.ACTION1_2;
+        sleep(speed/2);
+        currentSpriteVariant = CharacterSprite.ACTION1_3;
+        sleep(speed);
+        currentSpriteVariant = CharacterSprite.FRONT_N;
+        hasMeal = true;
+    }
+
+    private boolean isInKitchen() {
+        return (x < 9);
+    }
+
+    private boolean isThereAnyPlace() {
+        return (table.freePlacesCount() > 0);
+    }
+
+
 
 }

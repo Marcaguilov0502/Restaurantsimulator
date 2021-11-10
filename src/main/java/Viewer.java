@@ -13,7 +13,7 @@ public class Viewer extends Canvas implements Runnable {
 
     private int boxWidth = 40, boxHeight = 40;
 
-    private boolean debugMode = true;
+    private boolean debugMode = !true;
     private int width, height;
     private MySprites mySprites;
 

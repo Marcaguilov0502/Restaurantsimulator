@@ -8,7 +8,7 @@ public class Table {
     //Constants
 
 
-    private int MAX_MEALS_PER_PLACE = 5;
+    private final int MAX_MEALS_PER_PLACE = 5;
 
 
     //Attributes

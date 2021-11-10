@@ -26,7 +26,7 @@ public class Window extends JFrame  {
         window.setVisible(true);
         new Thread(viewer).start();
 
-        Table table = new Table(13,8,5,3);
+        Table table = new Table(13,8,3,2);
         restaurant.addTable(table);
 
         restaurant.addDecoration( new Decoration(24,4, Decoration.DOOR));
@@ -37,16 +37,15 @@ public class Window extends JFrame  {
 
         restaurant.addCharacter(new Chef(table, 2,5));
         restaurant.addCharacter(new Chef(table, 3,5));
-        restaurant.addCharacter(new Chef(table, 3,6));
         restaurant.addCharacter(new Chef(table, 4,5));
+        restaurant.addCharacter(new Chef(table, 2,6));
+        restaurant.addCharacter(new Chef(table, 3,6));
+        restaurant.addCharacter(new Chef(table, 4,6));
+
         restaurant.addCharacter(new Client(table,12,11));
         restaurant.addCharacter(new Client(table,11,11));
         restaurant.addCharacter(new Client(table,10,11));
-        restaurant.addCharacter(new Client(table,12,12));
-        restaurant.addCharacter(new Client(table,11,12));
-        restaurant.addCharacter(new Client(table,10,12));
-
-
+        restaurant.addCharacter(new Client(table,11,15));
 
         for (Character c : restaurant.getCharacters()) {
             new Thread(c).start();

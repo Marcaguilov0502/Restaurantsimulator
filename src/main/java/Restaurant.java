@@ -63,11 +63,115 @@ public class Restaurant {
         map[9][16] = BORDER;
     }
 
+    public ArrayList<Character> getCharacters() {
+        return characters;
+    }
+
+    public ArrayList<Decoration> getDecorations() {
+        return decorations;
+    }
+
     public int[][] getMap() {
         return map;
     }
 
-    public int[][] voidPositions() {
+    public ArrayList<Table> getTables() {
+        return tables;
+    }
+
+    public synchronized int[][] kitchenVoids() {
+        if (kitchenVoidCount() == 0) {
+            return null;
+        }
+
+        int[][] kitchenPositions = new int[kitchenVoidCount()][2];
+        int i = 0;
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < map[0].length; y++) {
+                if (map[x][y] == VOID) {
+                    kitchenPositions[i][0] = x;
+                    kitchenPositions[i][1] = y;
+                    i++;
+                }
+            }
+        }
+        return kitchenPositions;
+    }
+
+    public synchronized int kitchenVoidCount() {
+        int count = 0;
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < map[0].length; y++) {
+                if (map[x][y] == VOID) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public synchronized int[][] tableAccessVoids(Table table) {
+
+        int tableAccessPositionsCount = tableAccessVoidsCount(table);
+
+        if (tableAccessPositionsCount == 0) {
+            return null;
+        }
+
+        int[][] tableAccessPositions = new int[tableAccessPositionsCount][2];
+
+        int tableXStart = table.getX();
+        int tableXEnd = tableXStart + table.width();
+        int tableYStart = table.getY();
+        int tableYEnd = tableYStart + table.height();
+        int i = 0;
+
+        for (int x = tableXStart; x < tableXEnd && i < tableAccessPositionsCount; x++) {
+            if (map[x][tableYStart-1] == VOID) {
+                tableAccessPositions[i] = new int[]{x,tableYStart-1};
+                i++;
+            } else if (map[x][tableYEnd] == VOID ) {
+                tableAccessPositions[i] = new int[]{x,tableYEnd};
+                i++;
+            }
+        }
+
+        for (int y = tableYStart; y < tableYEnd && i < tableAccessPositionsCount; y++) {
+            if (map[tableXStart-1][y] == VOID ) {
+                tableAccessPositions[i] = new int[]{tableXStart-1,y};
+                i++;
+            } else if (map[tableXEnd][y] == VOID ) {
+                tableAccessPositions[i] = new int[]{tableXEnd,y};
+                i++;
+            }
+        }
+
+        return tableAccessPositions;
+    }
+
+    public synchronized int tableAccessVoidsCount(Table table) {
+        int tableXStart = table.getX();
+        int tableXEnd = tableXStart + table.width();
+        int tableYStart = table.getY();
+        int tableYEnd = tableYStart + table.height();
+        int count = 0;
+
+        for (int x = tableXStart; x < tableXEnd; x++) {
+            if (map[x][tableYStart-1] == VOID ||map[x][tableYEnd+1] == VOID ) {
+                count++;
+            }
+        }
+
+        for (int y = tableYStart; y < tableYEnd; y++) {
+            if (map[tableXStart-1][y] == VOID ||map[tableXEnd+1][y] == VOID ) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public synchronized int[][] voidPositions() {
         if (voidCount() == 0) {
             return null;
         }
@@ -85,7 +189,7 @@ public class Restaurant {
         return voidPositions;
     }
 
-    public int voidCount() {
+    public synchronized int voidCount() {
         int count = 0;
         for (int x = 0; x < map.length; x++) {
             for (int y = 0; y < map[0].length; y++) {
@@ -97,15 +201,4 @@ public class Restaurant {
         return count;
     }
 
-    public ArrayList<Character> getCharacters() {
-        return characters;
-    }
-
-    public ArrayList<Table> getTables() {
-        return tables;
-    }
-
-    public ArrayList<Decoration> getDecorations() {
-        return decorations;
-    }
 }
