@@ -9,7 +9,7 @@ public class Client extends Character {
     //Attributes
 
 
-
+    private boolean isHungry = true;
 
 
     //Constructor
@@ -24,26 +24,42 @@ public class Client extends Character {
         System.out.println("Client thread started");
         try {
             while (true) {
+                if (Window.restaurant.paused()) {
+                    sleep(1500);
+                    continue;
+                }
                 if (isOnTarget()) {
-                    if (isNextToTable() && isThereAnyMeal() && targetIsNextToTable()) {
+                    if (exit && x == 24 && y == 6) {
+                        Window.restaurant.getCharacters().remove(this);
+                        break;
+                    } else if (isNextToTable() && isThereAnyMeal() && isHungry) {
                         lookAtTable();
+                        approachToTable();
                         eat();
-                        targetRandom();
                     } else {
                         turnAround();
+                        isHungry = true;
                     }
                     lookForTarget();
                 }
                 followPath();
             }
+            Window.restaurant.addToMap(x,y,Window.restaurant.VOID);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     @Override
+    protected void targetExit() {
+        target(new int[]{24,6});
+    }
+
+    @Override
     protected void lookForTarget() {
-        if (isThereAnyMeal()) {
+        if (exit) {
+            targetExit();
+        } else if (isThereAnyMeal() && isHungry) {
             targetTable();
         } else {
             targetRandom();
@@ -85,16 +101,17 @@ public class Client extends Character {
 
     private void eat() throws InterruptedException {
         table.takeMeal();
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 15; i++) {
             currentSpriteVariant = CharacterSprite.ACTION1_1;
-            sleep(speed/5);
+            sleep((long) (speed/4));
             currentSpriteVariant = CharacterSprite.ACTION1_2;
-            sleep(speed/5);
+            sleep((long) (speed/4));
             currentSpriteVariant = CharacterSprite.ACTION1_3;
-            sleep(speed/5);
+            sleep((long) (speed/4));
             currentSpriteVariant = CharacterSprite.FRONT_N;
         }
         lookAtTable();
+        isHungry = false;
     }
 
     private boolean isThereAnyMeal() {

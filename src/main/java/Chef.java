@@ -27,15 +27,20 @@ public class Chef extends Character {
         System.out.println("Chef thread started");
         try {
             while (true) {
+                if (Window.restaurant.paused()) {
+                    sleep(1500);
+                    continue;
+                }
                 if (isOnTarget()) {
-                    if (isInKitchen() && !hasMeal) {
+                    if (exit && x == 3 && y == 5) {
+                        Window.restaurant.getCharacters().remove(this);
+                        break;
+                    } else if (isInKitchen() && !hasMeal) {
                         cook();
                         lookForTarget();
                     } else if (isNextToTable() && hasMeal && isThereAnyPlace()) {
                         lookAtTable();
-                        sleep(speed);
-                        table.placeMeal();
-                        hasMeal = false;
+                        serve();
                         lookForTarget();
                     } else {
                         turnAround();
@@ -44,14 +49,22 @@ public class Chef extends Character {
                 }
                 followPath();
             }
+            Window.restaurant.addToMap(x,y,Window.restaurant.VOID);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     @Override
+    protected void targetExit() {
+        target(new int[]{3,5});
+    }
+
+    @Override
     protected void lookForTarget() {
-        if (hasMeal && isThereAnyPlace()) {
+        if (exit) {
+            targetExit();
+        } else if (hasMeal && isThereAnyPlace()) {
             targetTable();
         } else if (!hasMeal) {
             targetKitchen();
@@ -70,13 +83,13 @@ public class Chef extends Character {
 
     private void cook() throws InterruptedException {
         currentSpriteVariant = CharacterSprite.FRONT_N;
-        sleep(speed/2);
+        sleep((long) (speed/2));
         currentSpriteVariant = CharacterSprite.ACTION1_1;
-        sleep(speed/2);
+        sleep((long) (speed/2));
         currentSpriteVariant = CharacterSprite.ACTION1_2;
-        sleep(speed/2);
+        sleep((long) (speed/2));
         currentSpriteVariant = CharacterSprite.ACTION1_3;
-        sleep(speed);
+        sleep((long) speed);
         currentSpriteVariant = CharacterSprite.FRONT_N;
         hasMeal = true;
     }
@@ -89,6 +102,12 @@ public class Chef extends Character {
         return (table.freePlacesCount() > 0);
     }
 
+
+    private void serve() throws InterruptedException {
+        approachToTable();
+        table.placeMeal();
+        hasMeal = false;
+    }
 
 
 }

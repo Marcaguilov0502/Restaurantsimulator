@@ -1,55 +1,74 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
+
+import static java.awt.GridBagConstraints.*;
 
 public class Window extends JFrame  {
 
     public static Restaurant restaurant;
 
-    public Window(String name, int width, int height) {
+    public Window(String name) {
         super(name);
-        this.setSize(width+15, height+39);
+        //this.setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        //this.setResizable(false);
+        this.setLayout(new GridBagLayout());
+
     }
 
-    public static void main(String[] args) throws IOException {
+    public void showWindow() throws IOException {
+        int vWidth = 1080, vHeight = 720;
+        int cpWidth = 300, cpHeight = 720;
+        Viewer viewer = new Viewer();
 
-        int width = 1080, height = 720;
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = BOTH;
+
+        this.getContentPane().add(viewer, gbc);
+
+        ControlPanel controlPanel = new ControlPanel();
+
+        gbc.weightx = 0.1f;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+
+        this.getContentPane().add(controlPanel, gbc);
+
+
+        viewer.setSize(vWidth-56, vHeight-56);
+        controlPanel.setSize(cpWidth, cpHeight-56);
+        this.setVisible(true);
+        new Thread(viewer).start();
+        this.setSize(vWidth+cpWidth-40, cpHeight-17);
+
+    }
+
+    public static void createRestaurant() {
 
         restaurant = new Restaurant();
-
-        Window window = new Window("Restaurant Simulator", width, height);
-        Viewer viewer = new Viewer(width, height);
-        window.add(viewer);
-        window.setVisible(true);
-        new Thread(viewer).start();
 
         Table table = new Table(13,8,3,2);
         restaurant.addTable(table);
 
+        restaurant.addDecoration( new Decoration(3,3, Decoration.DOOR));
         restaurant.addDecoration( new Decoration(24,4, Decoration.DOOR));
         restaurant.addDecoration( new Decoration(8,2, Decoration.PAINTING));
         restaurant.addDecoration( new Decoration(21,1, Decoration.SIGN));
         restaurant.addDecoration( new Decoration(1,4, Decoration.KITCHEN_BAR));
         restaurant.addDecoration( new Decoration(5,4, Decoration.KITCHEN_PIG));
+    }
 
-        restaurant.addCharacter(new Chef(table, 2,5));
-        restaurant.addCharacter(new Chef(table, 3,5));
-        restaurant.addCharacter(new Chef(table, 4,5));
-        restaurant.addCharacter(new Chef(table, 2,6));
-        restaurant.addCharacter(new Chef(table, 3,6));
-        restaurant.addCharacter(new Chef(table, 4,6));
+    public static void main(String[] args) throws IOException {
 
-        restaurant.addCharacter(new Client(table,12,11));
-        restaurant.addCharacter(new Client(table,11,11));
-        restaurant.addCharacter(new Client(table,10,11));
-        restaurant.addCharacter(new Client(table,11,15));
-
-        for (Character c : restaurant.getCharacters()) {
-            new Thread(c).start();
-        }
+        Window window = new Window("Restaurant Simulator");
+        createRestaurant();
+        window.showWindow();
 
     }
 

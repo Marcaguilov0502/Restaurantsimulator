@@ -11,12 +11,13 @@ public abstract class Character implements Runnable {
 
 
     public final int FRONT = 0, BACK = 1, LEFT = 2, RIGHT = 3;
-    public final int BASE_SPEED = 250;
+    public final float BASE_SPEED = 250f;
+
 
     //Attributes
 
 
-    protected int speed;
+    protected float speed;
     protected int currentSpriteVariant;
     protected int x,y;
     protected int targetX, targetY;
@@ -24,13 +25,13 @@ public abstract class Character implements Runnable {
     protected float xOffset, yOffset;
     protected int[] floor = new int[2];
     protected Table table;
+    protected boolean exit = false;
 
 
     //Constructor
 
 
     public Character(int x, int y, Table table) {
-        Random r = new Random();
         this.x = x;
         this.y = y;
         this.targetX = x;
@@ -38,7 +39,7 @@ public abstract class Character implements Runnable {
         xOffset = 0;
         yOffset = 0;
         this.currentSpriteVariant = CharacterSprite.FRONT_N;
-        speed = BASE_SPEED + r.nextInt(BASE_SPEED);
+        setNormalSpeed();
         Window.restaurant.addToMap(x,y,Window.restaurant.CHARACTER);
         this.table = table;
     }
@@ -46,6 +47,35 @@ public abstract class Character implements Runnable {
 
     //Methods
 
+
+    protected void approachToTable() throws InterruptedException {
+        int[][] map = Window.restaurant.getMap();
+        int TABLE = Window.restaurant.TABLE;
+        float xo=0, yo= 0;
+        if (map[x+1][y] == TABLE) {
+            xo = 0.3f;
+        } else if (map[x-1][y] == TABLE) {
+            xo = -0.3f;
+        } else if (map[x][y+1] == TABLE) {
+            yo = 0.3f;
+        } else if (map[x][y-1] == TABLE ) {
+            yo = -0.3f;
+        }
+        xo /= speed/4f;
+        yo /= speed/4f;
+        for (int i = 0; i < speed/4; i++) {
+            xOffset += xo;
+            yOffset += yo;
+            sleep(1);
+        }
+        for (int i = 0; i < speed/4; i++) {
+            xOffset -= xo;
+            yOffset -= yo;
+            sleep(1);
+        }
+        xOffset = 0;
+        yOffset = 0;
+    }
 
     protected void findPath() {
         int[][] restaurantMap = Window.restaurant.getMap();
@@ -65,6 +95,16 @@ public abstract class Character implements Runnable {
 
     public float getYWithOffset() {
         return ((float)y + yOffset);
+    }
+
+    protected boolean isNextToTable() {
+        int[][] map = Window.restaurant.getMap();
+        int TABLE = Window.restaurant.TABLE;
+        return (map[x+1][y] == TABLE || map[x-1][y] == TABLE || map[x][y+1] == TABLE || map[x][y-1] == TABLE );
+    }
+
+    protected boolean isOnTarget() {
+        return (targetX == x && targetY == y);
     }
 
     protected void lookAtTable() {
@@ -90,14 +130,18 @@ public abstract class Character implements Runnable {
         return f0;
     }
 
-    protected boolean isNextToTable() {
-        int[][] map = Window.restaurant.getMap();
-        int TABLE = Window.restaurant.TABLE;
-        return (map[x+1][y] == TABLE || map[x-1][y] == TABLE || map[x][y+1] == TABLE || map[x][y-1] == TABLE );
+    public void setNormalSpeed() {
+        Random r = new Random();
+        speed = BASE_SPEED + r.nextFloat()*BASE_SPEED;
     }
 
-    protected boolean isOnTarget() {
-        return (targetX == x && targetY == y);
+    public void doubleSpeed() {
+        speed = speed/2;
+        if (speed == 0) {speed = 1;}
+    }
+
+    public void halfSpeed() {
+        speed = speed*2;
     }
 
     protected int[][] turnIntoPathMap(int[][] map) {
@@ -119,7 +163,7 @@ public abstract class Character implements Runnable {
         return pathFindingMap;
     }
 
-    protected void target(int[] position) {
+    protected synchronized void target(int[] position) {
         Window.restaurant.addToMap(targetX,targetY,Window.restaurant.VOID);
         targetX = position[0];
         targetY = position[1];
@@ -129,7 +173,7 @@ public abstract class Character implements Runnable {
             Window.restaurant.addToMap(targetX, targetY, Window.restaurant.TARGETED_POSITION);
             findPath();
         } else {
-            lookForTarget();
+            targetRandom();
         }
     }
 
@@ -164,6 +208,10 @@ public abstract class Character implements Runnable {
 
     }
 
+    public void exit() {
+        this.exit = true;
+    }
+
     protected void followPath() throws InterruptedException {
 
         if (path.size() == 0) {
@@ -188,6 +236,8 @@ public abstract class Character implements Runnable {
             findPath();
         }
     }
+
+    protected abstract void targetExit();
 
     protected void moveDown() throws InterruptedException {
         int[][] map = Window.restaurant.getMap();
@@ -409,7 +459,7 @@ public abstract class Character implements Runnable {
             if (currentSpriteVariant > 17) {
                 currentSpriteVariant = 0;
             }
-            sleep(200);
+            sleep((long) speed);
         }
     }
 
@@ -424,7 +474,7 @@ public abstract class Character implements Runnable {
             } else if (currentSpriteVariant < 12 ) {
                 currentSpriteVariant -= 6;
             }
-            sleep(speed);
+            sleep((long) speed);
         }
     }
 

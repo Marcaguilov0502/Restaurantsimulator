@@ -19,6 +19,7 @@ public class Restaurant {
     private ArrayList<Character> characters = new ArrayList();
     private ArrayList<Table> tables = new ArrayList();
     private ArrayList<Decoration> decorations = new ArrayList();
+    private boolean paused = false;
 
 
     //Constructor
@@ -34,6 +35,19 @@ public class Restaurant {
 
     public void addCharacter(Character character) {
         characters.add(character);
+        new Thread(character).start();
+    }
+
+    public void addChef() {
+        if (map[3][5] == VOID) {
+            addCharacter(new Chef(tables.get(0), 3, 5));
+        }
+    }
+
+    public void addClient() {
+        if (map[24][6] == VOID) {
+            addCharacter(new Client(tables.get(0), 24, 6));
+        }
     }
 
     public void addDecoration(Decoration decoration) {
@@ -45,6 +59,9 @@ public class Restaurant {
     }
 
     public synchronized void addToMap(int x, int y, int elementType) {
+        if (x == 0 && y == 0 && (elementType == VOID || elementType == TARGETED_POSITION)) {
+            return;
+        }
         map[x][y] = elementType;
     }
 
@@ -108,6 +125,30 @@ public class Restaurant {
             }
         }
         return count;
+    }
+
+    public boolean paused() {return paused;}
+
+    public void pause() {
+        paused = !paused;
+    }
+
+    public void removeChef() {
+        for (Character c : characters) {
+            if (c instanceof Chef && !c.exit) {
+                c.exit();
+                return;
+            }
+        }
+    }
+
+    public void removeClient() {
+        for (Character c : characters) {
+            if (c instanceof Client && !c.exit) {
+                c.exit();
+                return;
+            }
+        }
     }
 
     public synchronized int[][] tableAccessVoids(Table table) {

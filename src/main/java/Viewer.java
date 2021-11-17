@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -10,26 +11,52 @@ public class Viewer extends Canvas implements Runnable {
 
     //Attributes
 
-
+    private int margin = -28;
     private int boxWidth = 40, boxHeight = 40;
 
     private boolean debugMode = !true;
-    private int width, height;
     private MySprites mySprites;
 
 
     //Constructor
 
 
-    public Viewer(int width, int height) throws IOException {
-        this.width = width;
-        this.height = height;
+    public Viewer() throws IOException {
         mySprites = new MySprites();
+        this.setBackground(new Color(135,139,145));
     }
 
 
     //Methods
 
+    public void update() {
+
+        BufferStrategy bs = getBufferStrategy();
+        if (bs == null) {
+            createBufferStrategy(2);
+            return;
+        }
+
+        Graphics g = bs.getDrawGraphics();
+        BufferedImage auxImage = new BufferedImage(getWidth()+160, getHeight()+160, BufferedImage.TYPE_INT_ARGB);
+        Graphics auxGraphics = auxImage.createGraphics();
+        draw(auxGraphics);
+        auxGraphics.dispose();
+        g.drawImage(auxImage, margin, margin, this);
+        g.dispose();
+        bs.show();
+
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            update();
+        }
+    }
+
+
+    //Draw Methods
 
     public synchronized void draw(Graphics g) {
 
@@ -125,26 +152,5 @@ public class Viewer extends Canvas implements Runnable {
         }
     }
 
-    public void update() {
-
-        BufferStrategy bs = getBufferStrategy();
-        if (bs == null) {
-            createBufferStrategy(2);
-            return;
-        }
-
-        Graphics g = bs.getDrawGraphics();
-        draw(g);
-        g.dispose();
-        bs.show();
-
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            update();
-        }
-    }
 
 }
