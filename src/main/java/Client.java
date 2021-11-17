@@ -28,10 +28,14 @@ public class Client extends Character {
                     sleep(1500);
                     continue;
                 }
+                if (deleted) {
+                    Window.restaurant.getCharacters().remove(this);
+                    break;
+                }
+                if (exit) {targetExit();}
                 if (isOnTarget()) {
                     if (exit && x == 24 && y == 6) {
-                        Window.restaurant.getCharacters().remove(this);
-                        break;
+                        delete();
                     } else if (isNextToTable() && isThereAnyMeal() && isHungry) {
                         lookAtTable();
                         approachToTable();

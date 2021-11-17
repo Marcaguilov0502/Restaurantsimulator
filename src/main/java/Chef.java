@@ -31,10 +31,13 @@ public class Chef extends Character {
                     sleep(1500);
                     continue;
                 }
+                if (exit) {targetExit();}
+                if (deleted) {
+                    Window.restaurant.getCharacters().remove(this);
+                    break;}
                 if (isOnTarget()) {
                     if (exit && x == 3 && y == 5) {
-                        Window.restaurant.getCharacters().remove(this);
-                        break;
+                        delete();
                     } else if (isInKitchen() && !hasMeal) {
                         cook();
                         lookForTarget();

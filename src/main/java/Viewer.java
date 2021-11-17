@@ -14,7 +14,7 @@ public class Viewer extends Canvas implements Runnable {
     private int margin = -28;
     private int boxWidth = 40, boxHeight = 40;
 
-    private boolean debugMode = !true;
+    public static boolean debugMode = !true;
     private MySprites mySprites;
 
 
@@ -69,7 +69,7 @@ public class Viewer extends Canvas implements Runnable {
         }
     }
 
-    public void drawAllCharacters(Graphics g, ArrayList<Character> characters) {
+    public synchronized void drawAllCharacters(Graphics g, ArrayList<Character> characters) {
         for (Character c : characters) {
             if (c instanceof Chef) {
                 drawChef(g, (Chef) c);

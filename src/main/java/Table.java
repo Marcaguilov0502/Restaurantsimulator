@@ -14,6 +14,8 @@ public class Table {
     //Attributes
 
 
+    private int eaten = 0, placed = 0;
+
     private final int x,y;
 
     private int[][] places;
@@ -71,8 +73,16 @@ public class Table {
         return count;
     }
 
+    public int getEatenMeals() {
+        return eaten;
+    }
+
     public int getMealAt(int x, int y) {
         return places[x][y];
+    }
+
+    public int getPlacedMeals() {
+        return placed;
     }
 
     public int[] getRandomPlace() {
@@ -125,6 +135,7 @@ public class Table {
         places[place[0]][place[1]]++;
         System.out.println("A meal was placed");
         System.out.println("Total = " +mealCount());
+        placed++;
         notifyAll();
     }
 
@@ -169,6 +180,7 @@ public class Table {
         places[place[0]][place[1]]--;
         System.out.println("A meal was taken");
         System.out.println("Total = " +mealCount());
+        eaten++;
         notifyAll();
     }
 

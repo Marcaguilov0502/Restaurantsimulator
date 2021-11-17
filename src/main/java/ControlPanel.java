@@ -13,7 +13,8 @@ public class ControlPanel extends JPanel {
         this.setLayout(new GridBagLayout());
         addComponents();
         addListeners();
-        this.setBackground(new Color(255,150,150));
+        new Thread(informationPanel).start();
+        this.setBackground(new Color(135, 139, 145));
     }
 
     InformationPanel informationPanel = new InformationPanel();
@@ -30,6 +31,8 @@ public class ControlPanel extends JPanel {
     Button doubleSpeed = new Button("Speed * 2");
 
     Button reset = new Button("Reset");
+
+    Button debugMode = new Button("Debug Mode: OFF");
 
 
     private void addComponents() {
@@ -80,6 +83,11 @@ public class ControlPanel extends JPanel {
 
         gbc.gridx = 1;
         add(reset, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2;
+        add(debugMode, gbc);
 
     }
 
@@ -155,7 +163,23 @@ public class ControlPanel extends JPanel {
         reset.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                for (Character c : Window.restaurant.getCharacters()) {
+                    c.delete();
+                }
                 Window.restaurant = new Restaurant();
+                Window.createRestaurant();
+            }
+        });
+
+        debugMode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Viewer.debugMode = !Viewer.debugMode;
+                if (Viewer.debugMode) {
+                    debugMode.setLabel("Debug Mode: ON");
+                } else {
+                    debugMode.setLabel("Debug Mode: OFF");
+                }
             }
         });
 

@@ -26,6 +26,7 @@ public abstract class Character implements Runnable {
     protected int[] floor = new int[2];
     protected Table table;
     protected boolean exit = false;
+    protected boolean deleted = false;
 
 
     //Constructor
@@ -47,6 +48,18 @@ public abstract class Character implements Runnable {
 
     //Methods
 
+
+    public void adaptPath() {
+        Queue<int[]> adaptedPath = new LinkedList<>();
+        while (!path.isEmpty()) {
+            int step[] = path.poll();
+            if (step[0] < 9) {
+                step[1]--;
+            }
+            adaptedPath.add(step);
+        }
+        path = adaptedPath;
+    }
 
     protected void approachToTable() throws InterruptedException {
         int[][] map = Window.restaurant.getMap();
@@ -206,6 +219,10 @@ public abstract class Character implements Runnable {
     @Override
     public void run() {
 
+    }
+
+    public void delete() {
+        deleted = true;
     }
 
     public void exit() {

@@ -33,18 +33,18 @@ public class Restaurant {
     //Methods
 
 
-    public void addCharacter(Character character) {
+    public synchronized void addCharacter(Character character) {
         characters.add(character);
         new Thread(character).start();
     }
 
-    public void addChef() {
+    public synchronized void addChef() {
         if (map[3][5] == VOID) {
             addCharacter(new Chef(tables.get(0), 3, 5));
         }
     }
 
-    public void addClient() {
+    public synchronized void addClient() {
         if (map[24][6] == VOID) {
             addCharacter(new Client(tables.get(0), 24, 6));
         }
@@ -80,7 +80,7 @@ public class Restaurant {
         map[9][16] = BORDER;
     }
 
-    public ArrayList<Character> getCharacters() {
+    public synchronized ArrayList<Character> getCharacters() {
         return characters;
     }
 
